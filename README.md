@@ -22,7 +22,7 @@ The **project lead agent** uses this information to further refine and describe 
 Once the user chooses which hypothesis they want to test, the **experimenter agent** designs an experimental procedure to test this hypothesis.
 
 ## How to run
-In the topmost folder, run the command **crewai run**.
+In the topmost folder, run the command **crewai install** to lock and install the dependencies. Then run **crewai run**.
 
 
 ## Open Questions
