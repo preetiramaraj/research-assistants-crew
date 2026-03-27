@@ -1,7 +1,7 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
-from crewai_tools import TavilySearchTool
+from crewai_tools import RagTool, TavilySearchTool, ArxivPaperTool
 from typing import List
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
@@ -20,12 +20,15 @@ class ResearchAssistants():
     
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
+    arxiv_tool_no_download = ArxivPaperTool(
+        download_pdfs=False
+    )
     @agent
     def researcher(self) -> Agent:
         return Agent(
             config=self.agents_config['researcher'], # type: ignore[index]
             verbose=True,
-            tools=[TavilySearchTool()]
+            tools=[TavilySearchTool(), self.arxiv_tool_no_download]
         )
     
     # @agent
@@ -43,8 +46,15 @@ class ResearchAssistants():
     def research_problem_task(self) -> Task:
         return Task(
             config=self.tasks_config['research_problem_task'], # type: ignore[index]
+            output_file='results/research_problem.md'
         )
 
+    @task
+    def identify_novel_project_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['identify_novel_project_task'], # type: ignore[index]
+            output_file='results/identify_novel_project.md'
+        )
     # @task
     # def reporting_task(self) -> Task:
     #     return Task(

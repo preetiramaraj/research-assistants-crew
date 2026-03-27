@@ -2,7 +2,7 @@ research_problem_task:
   description: >
     Identify five different research projects you need to execute to answer the high level
     research question {research-question} based in the domain of {domain}. These research projects should
-    be smaller in scopein comparison to the provided research question. Identify the 
+    be smaller in scope in comparison to the provided research question. Identify the 
     goals of these research projects that will help answer the high-level research question 
   expected_output: >
     Five different research project ideas that will contribute to answering the high level
@@ -11,10 +11,10 @@ research_problem_task:
 
 identify_novel_project_task:
   description: >
-    the research projects identified before,
-    identify one research project that is the most novel. This idea must not have been pursued in depth already in the field of {domain} 
+    You need to use the tavilysearchtool to survey research for each of the five projects, and find existing research that addresses similar problems as each of the five projects. Based on the results, identify
+    and output the one research project that is the most novel. This idea must not have been pursued in depth already in the field of {domain} 
   expected_output: >
-    research project description
+    ONLY the single research project description (out of the five you created) with the title, goal and contribution that you have identified as novel and no other information
   agent: researcher
 
 # literature_review_task:
