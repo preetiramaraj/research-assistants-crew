@@ -17,7 +17,15 @@ identify_novel_project_task:
     ONLY the single research project description (out of the five you created) with the title, goal and contribution that you have identified as novel and no other information
   agent: researcher
 
-# literature_review_task:
+literature_review_task:
+  description: >
+    Perform a literature review by searching arxiv for papers AND ALSO using the tavilysearchtool to find papers that address the same aspects as those described in the research project provided by the task before. These papers must have similar goals and contributions as this project
+     and must be situated in the domain of {domain}.
+    Find the relevant papers and summarize their research in terms of how it relates to the research project.
+  expected_output: >
+    Start with the research project description you were provided from before. Then list Twenty research papers, with title, authors, summary, relevance to research project, doi, and the link to each paper.
+    Formatted as markdown without '```'
+  agent: literature_reviewer
 #   description: >
 #     Perform a literature review of papers related to the research projects you've been given. 
 #     Review the research projects you got and 
