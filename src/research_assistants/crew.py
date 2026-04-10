@@ -1,9 +1,10 @@
-from crewai import Agent, Crew, Process, Task
+from crewai import Agent, Crew, LLM, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from crewai_tools import RagTool, TavilySearchTool, ArxivPaperTool
 from pathlib import Path
 from typing import List
+from research_assistants.tools.open_access_pdf_from_markdown_tool import OpenAccessPdfFromMarkdownTool
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
@@ -15,27 +16,27 @@ class ResearchAssistants():
     agents: List[BaseAgent]
     tasks: List[Task]
 
-    arxiv_dir = (Path(__file__).resolve().parents[2] / "arxiv_pdfs").resolve()
+    lit_review_dir = (Path(__file__).resolve().parents[2] / "lit_review_pdfs").resolve()
+    lit_review_dir.mkdir(parents=True, exist_ok=True)
     # Learn more about YAML configuration files here:
     # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
     # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
     
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
-    arxiv_tool = ArxivPaperTool(
-        download_pdfs=True,
-        save_dir=str(arxiv_dir),
-        use_title_as_filename=True
-        )
-    arxiv_tool_no_download = ArxivPaperTool(
-        download_pdfs=False
+
+    arxiv_tool = ArxivPaperTool(download_pdfs=False)
+
+    pdf_download_tool = OpenAccessPdfFromMarkdownTool(
+        md_path=str((Path(__file__).resolve().parents[2] / "results" / "literature_review.md").resolve()),
+        save_dir=str(lit_review_dir),
     )
     @agent
     def researcher(self) -> Agent:
         return Agent(
             config=self.agents_config['researcher'], # type: ignore[index]
             verbose=True,
-            tools=[TavilySearchTool(), self.arxiv_tool_no_download]
+            tools=[TavilySearchTool(), self.arxiv_tool]
         )
 
     @agent
@@ -44,6 +45,14 @@ class ResearchAssistants():
             config=self.agents_config['literature_reviewer'], # type: ignore[index]
             verbose=True,
             tools=[TavilySearchTool(), self.arxiv_tool]
+        )
+
+    @agent
+    def pdf_downloader(self) -> Agent:
+        return Agent(
+            config=self.agents_config['pdf_downloader'], # type: ignore[index]
+            verbose=True,
+            tools=[self.pdf_download_tool]
         )
 
     # To learn more about structured task outputs,
@@ -70,6 +79,18 @@ class ResearchAssistants():
             tools=[TavilySearchTool(), self.arxiv_tool],
             output_file='results/literature_review.md'
         )
+
+    @task
+    def download_pdfs_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['download_pdfs_task'], # type: ignore[index]
+            tools=[self.pdf_download_tool],
+            output_file='results/download_report.md'
+        )
+    
+
+    
+
     # @task
     # def reporting_task(self) -> Task:
     #     return Task(

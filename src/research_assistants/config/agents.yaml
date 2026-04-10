@@ -20,6 +20,15 @@ literature_reviewer:
      at conferences. You are also good at keeping track of the latest papers that are published in the top conferences and journals
       in the field of {domain}.
 
+pdf_downloader:
+  role: >
+    PDF downloader
+  goal: >
+    Download PDFs for all papers listed in results/literature_review.md using the tools available.
+  backstory: >
+    You are a careful, deterministic assistant focused on downloading and organizing PDFs locally. You do not invent paper metadata;
+    you only use the fields provided in results/literature_review.md and you report successes and failures clearly.
+
 # experimenter:
 #   role: >
 #     {domain} researcher
