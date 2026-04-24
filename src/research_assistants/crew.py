@@ -16,6 +16,8 @@ class ResearchAssistants():
     agents: List[BaseAgent]
     tasks: List[Task]
 
+    llm = LLM(model="groq/openai/gpt-oss-20b",
+              )
     lit_review_dir = (Path(__file__).resolve().parents[2] / "lit_review_pdfs").resolve()
     lit_review_dir.mkdir(parents=True, exist_ok=True)
     # Learn more about YAML configuration files here:
@@ -36,6 +38,7 @@ class ResearchAssistants():
         return Agent(
             config=self.agents_config['researcher'], # type: ignore[index]
             verbose=True,
+            llm=self.llm
             tools=[TavilySearchTool(), self.arxiv_tool]
         )
 
@@ -62,15 +65,11 @@ class ResearchAssistants():
     def research_problem_task(self) -> Task:
         return Task(
             config=self.tasks_config['research_problem_task'], # type: ignore[index]
-            output_file='results/research_problem.md'
+            output_file='results/research_problem.md',
+            human_input=True
+            #tools=[TavilySearchTool()]
         )
 
-    @task
-    def identify_novel_project_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['identify_novel_project_task'], # type: ignore[index]
-            output_file='results/identify_novel_project.md'
-        )
 
     @task
     def literature_review_task(self) -> Task:
