@@ -17,6 +17,11 @@ class ResearchAssistants():
     tasks: List[Task]
 
     llm = LLM(model="groq/openai/gpt-oss-20b",
+              num_retries=3
+              )
+
+    llm2 = LLM(model="groq/openai/gpt-oss-20b",
+              num_retries=3
               )
     lit_review_dir = (Path(__file__).resolve().parents[2] / "lit_review_pdfs").resolve()
     lit_review_dir.mkdir(parents=True, exist_ok=True)
@@ -27,7 +32,7 @@ class ResearchAssistants():
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
 
-    arxiv_tool = ArxivPaperTool(download_pdfs=False)
+    semantic_scholar_tool = SemanticScholarMCPTool()
 
     pdf_download_tool = OpenAccessPdfFromMarkdownTool(
         md_path=str((Path(__file__).resolve().parents[2] / "results" / "literature_review.md").resolve()),
@@ -47,6 +52,8 @@ class ResearchAssistants():
         return Agent(
             config=self.agents_config['literature_reviewer'], # type: ignore[index]
             verbose=True,
+            llm=self.llm2,
+            # tools=[TavilySearchTool(), self.arxiv_tool]
             tools=[TavilySearchTool(), self.arxiv_tool]
         )
 
@@ -70,12 +77,21 @@ class ResearchAssistants():
             #tools=[TavilySearchTool()]
         )
 
+    @task
+    def create_search_queries_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['create_search_queries_task'], # type: ignore[index]
+            human_input=True,
+            output_file='results/search_queries.md'
+            #tools=[TavilySearchTool()]
+        )
 
     @task
     def literature_review_task(self) -> Task:
         return Task(
             config=self.tasks_config['literature_review_task'], # type: ignore[index]
-            tools=[TavilySearchTool(), self.arxiv_tool],
+            execution_delay=15,
+            tools=[self.semantic_scholar_tool],
             output_file='results/literature_review.md'
         )
 

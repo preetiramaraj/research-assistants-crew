@@ -10,18 +10,21 @@ research_problem_task:
   agent: researcher
 
 
+create_search_queries_task:
+  description: >
+    Read the project description from the previous task. Then create 5 search queries with no more than two search terms/keywords separated by AND relevant to the 
+    project description. These search queries should be optimized for retrieving relevant related research in the field of {domain}.
+    An example of a search query is: "search term 1" AND "search term 2"
+  expected_output: >
+    A list of 5 search queries with key phrases and keywords to find literature related to the current project.
+  agent: literature_reviewer
 literature_review_task:
   description: >
-    Read the text within the tags <FINAL></FINAL> from results/identify_novel_project.md and extract the final selected
-    novel project. Then perform a targeted literature search by searching arxiv for papers AND using the tavilysearchtool specifically about that selected project using 5-10 key keywords/phrases + 2-4 short search queries: find relevant papers, surveys, and closely related prior work.
-    Prefer peer-reviewed sources and recent work (last 5-7 years) but include seminal older papers if foundational. These papers must be situated in the domain of {domain}.
-    Summarize their research and also writes 2-4 sentences of how the research relates to the original research project.
-    IMPORTANT: This is a discovery-only step. Do NOT download any PDFs in this task.
-    First, output the exact research project description you read from results/identify_novel_project.md.
-    Then, output each paper in a machine-parseable format with labeled fields exactly as: Title, Authors, Year, DOI, arXiv, Link, Summary, Relevance.
+   Read the first search query from the previous task's output. Use only the one query to search Semantic Scholar for relevant papers and surveys using the semantic_scholar_search tool.
+   IMPORTANT: Make exactly ONE call to the semantic_scholar_search tool with limit=10 to get all papers at once. Do not make multiple calls or search with different query variations. If the tool returns 'No papers found for query: [query]', output the following markdown message: '# No papers found\n\nNo matching papers were found for the given search query.'
+   IMPORTANT: This is a discovery-only step. Do NOT download any PDFs in this task.
   expected_output: >
-    Start with the research project description you were provided from before.
-    Then list Twenty research papers formatted as markdown without '```'.
+    List ten research papers formatted as markdown without '```'.
     IMPORTANT: Each paper entry MUST start with a heading line exactly like: ### Paper 1
     For each paper, include these labeled fields on separate lines:
     Title: ...
@@ -30,8 +33,8 @@ literature_review_task:
     DOI: ... (or DOI: N/A)
     arXiv: ... (or arXiv: N/A)
     Link: ...
-    Summary: ...
-    Relevance: ...
+    Citation Count: ...
+    Open Access PDF: ... (or Open Access PDF: N/A)
   agent: literature_reviewer
 
 download_pdfs_task:
