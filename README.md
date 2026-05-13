@@ -28,5 +28,7 @@ In the topmost folder, run the command **crewai install** to lock and install th
 ## Open Questions
 1. Design constraint: Access to academic literature is restricted because many papers sit behind paywalls. 
     - Current workaround: Prioritize open-access papers (arXiv, author-hosted PDFs).
+2. Token Limits: Working with groq openai model means it is difficult to run multiple agents.
+   - Current workaround: Set LLM to retry after an execution delay so that token limit can reset.
 
 
