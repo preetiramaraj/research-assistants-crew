@@ -12,9 +12,9 @@ research_problem_task:
 
 create_search_queries_task:
   description: >
-    Read the project description from the previous task. Then create 5 search queries with no more than two search terms/keywords separated by AND relevant to the 
-    project description. These search queries should be optimized for retrieving relevant related research in the field of {domain}.
-    An example of a search query is: "search term 1" AND "search term 2"
+   Read the project description from the previous task. Then create 5 search queries with no more than two search terms/keywords relevant to the 
+   project description. These search queries should be optimized for retrieving relevant related research in the field of {domain}.
+   An example of a search query is: search term 1 search term 2. Don't add any quotations.
   expected_output: >
     A list of 5 search queries with key phrases and keywords to find literature related to the current project.
   agent: literature_reviewer
