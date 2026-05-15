@@ -12,8 +12,7 @@ Year: 2024
 DOI: 10.1000/xyz123
 arXiv: N/A
 Link: https://example.org/paper
-Summary: Something.
-Relevance: Very.
+Open Access PDF: https://example.org/paper.pdf
 
 ### Paper 2
 - Title: Example Paper Two
@@ -22,6 +21,7 @@ Relevance: Very.
 - DOI: N/A
 - arXiv: 2401.01234
 - Link: https://arxiv.org/abs/2401.01234
+- Open Access PDF: N/A
 """
 
     papers = parse_literature_review_markdown(md)
@@ -30,6 +30,8 @@ Relevance: Very.
     assert papers[0].title == "Example Paper One"
     assert papers[0].doi == "10.1000/xyz123"
     assert papers[0].arxiv == "N/A"
+    assert papers[0].open_access_pdf == "https://example.org/paper.pdf"
 
     assert papers[1].title == "Example Paper Two"
     assert papers[1].arxiv == "2401.01234"
+    assert papers[1].open_access_pdf == "N/A"

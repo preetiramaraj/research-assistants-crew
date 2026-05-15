@@ -1,11 +1,11 @@
 research_problem_task:
   description: >
-    Identify five different research projects you need to execute to answer the high level
+    Identify three independent research projects you need to execute to answer the high level
     research question {research-question} based in the domain of {domain}. These research projects should
-    be smaller in scope in comparison to the provided research question. Identify the 
-    goals of these research projects that will help answer the high-level research question 
+    be much smaller in scope in comparison to the provided research question and should be completable in a 6 month timeframe by a PhD student. 
+    Identify the goals of these research projects that will help answer the high-level research question 
   expected_output: >
-    Five different research project ideas that will contribute to answering the high level
+    Three independent research project descriptions with a title, goal, a 4-6 sentence paragraph description of how to achieve this goal, and contributions to answering the high level
     research question {research-question}
   agent: researcher
 
@@ -18,41 +18,41 @@ create_search_queries_task:
   expected_output: >
     A list of 5 search queries with key phrases and keywords to find literature related to the current project.
   agent: literature_reviewer
-literature_review_task:
-  description: >
-   Read the first search query from the previous task's output. Use only the one query to search Semantic Scholar for relevant papers and surveys using the semantic_scholar_search tool.
-   IMPORTANT: Make exactly ONE call to the semantic_scholar_search tool with limit=10 to get all papers at once. Do not make multiple calls or search with different query variations. If the tool returns 'No papers found for query: [query]', output the following markdown message: '# No papers found\n\nNo matching papers were found for the given search query.'
-   IMPORTANT: This is a discovery-only step. Do NOT download any PDFs in this task.
-  expected_output: >
-    List ten research papers formatted as markdown without '```'.
-    IMPORTANT: Each paper entry MUST start with a heading line exactly like: ### Paper 1
-    For each paper, include these labeled fields on separate lines:
-    Title: ...
-    Authors: ...
-    Year: ...
-    DOI: ... (or DOI: N/A)
-    arXiv: ... (or arXiv: N/A)
-    Link: ...
-    Citation Count: ...
-    Open Access PDF: ... (or Open Access PDF: N/A)
-  agent: literature_reviewer
 
-download_pdfs_task:
-  description: >
-    Read results/literature_review.md and download PDFs for every paper listed there (including arXiv and non-arXiv) into the local PDF folder.
-    Use the PDF download tool. Do not change the paper list; only download and report outcomes.
-  expected_output: >
-    A markdown download report listing each paper title and whether its PDF was downloaded, skipped, or failed, including saved file paths.
-  agent: pdf_downloader
+# literature_review_task:
 #   description: >
-#     Perform a literature review of papers related to the research projects you've been given. 
-#     Review the research projects you got and 
-#      conduct a thorough research about the hypothesis in 
-#      {domain}.
-#     Find the relevant papers and summarize their research in terms of how it relates to the research project.
-#     Make sure the report is detailed and contains any and all relevant information.
+#    Read the first search query from the previous task's output. Use only the one query to search Semantic Scholar for relevant papers and surveys using the semantic_scholar_search tool.
+#    IMPORTANT: Make exactly ONE call to the semantic_scholar_search tool with limit=10 to get all papers at once. Do not make multiple calls or search with different query variations. If the tool returns 'No papers found for query: [query]', output the following markdown message: '# No papers found\n\nNo matching papers were found for the given search query.'
+#    IMPORTANT: This is a discovery-only step. Do NOT download any PDFs in this task.
 #   expected_output: >
-#     A fully fledged report with the main research projects as topics, each with a full section of information.
+#     List ten research papers formatted as markdown without '```'.
+#     IMPORTANT: Each paper entry MUST start with a heading line exactly like: ### Paper 1
+#     For each paper, include these labeled fields on separate lines:
+#     Title: ...
+#     Authors: ...
+#     Year: ...
+#     DOI: ... (or DOI: N/A)
+#     arXiv: ... (or arXiv: N/A)
+#     Link: ...
+#     Citation Count: ...
+#     Open Access PDF: ... (or Open Access PDF: N/A)
+#   agent: literature_reviewer
+
+#Prefer peer-reviewed sources and recent work (last 5-7 years) but include seminal older papers if foundational.
+
+#Assign a rank to each of the papers based on its relevance to the project in results/research_problem.md and the research question {research-question}, its citation count (use Google Scholar or Semantic Scholar if available), and its recency.
+
+#Write 1-2 sentences of how the research relates to the original research project.
+
+ #  Relevance: ...
+
+# download_pdfs_task:
+#   description: >
+#     Read results/literature_review.md and download PDFs for every paper listed there into the local PDF folder.
+#     Do not change the paper list; only download and report outcomes.
+#   expected_output: >
+#     A markdown download report listing each paper title and whether its PDF was downloaded, skipped, or failed, including saved file paths.
+#   agent: pdf_downloader
 #     Formatted as markdown without '```'
 #   agent: literature_reviewer
 

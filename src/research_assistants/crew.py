@@ -32,8 +32,6 @@ class ResearchAssistants():
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
 
-    semantic_scholar_tool = SemanticScholarMCPTool()
-
     pdf_download_tool = OpenAccessPdfFromMarkdownTool(
         md_path=str((Path(__file__).resolve().parents[2] / "results" / "literature_review.md").resolve()),
         save_dir=str(lit_review_dir),
@@ -57,13 +55,15 @@ class ResearchAssistants():
             tools=[TavilySearchTool(), self.arxiv_tool]
         )
 
-    @agent
-    def pdf_downloader(self) -> Agent:
-        return Agent(
-            config=self.agents_config['pdf_downloader'], # type: ignore[index]
-            verbose=True,
-            tools=[self.pdf_download_tool]
-        )
+    # @agent
+    # def pdf_downloader(self) -> Agent:
+    #     return Agent(
+    #         config=self.agents_config['pdf_downloader'], # type: ignore[index]
+    #         verbose=True,
+    #         llm=self.llm3,
+    #         max_iter=1,
+    #         tools=[self.pdf_download_tool]
+    #     )
 
     # To learn more about structured task outputs,
     # task dependencies, and task callbacks, check out the documentation:
@@ -86,22 +86,22 @@ class ResearchAssistants():
             #tools=[TavilySearchTool()]
         )
 
-    @task
-    def literature_review_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['literature_review_task'], # type: ignore[index]
-            execution_delay=15,
-            tools=[self.semantic_scholar_tool],
-            output_file='results/literature_review.md'
-        )
+    # @task
+    # def literature_review_task(self) -> Task:
+    #     return Task(
+    #         config=self.tasks_config['literature_review_task'], # type: ignore[index]
+    #         execution_delay=15,
+    #         tools=[self.semantic_scholar_tool],
+    #         output_file='results/literature_review.md'
+    #     )
 
-    @task
-    def download_pdfs_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['download_pdfs_task'], # type: ignore[index]
-            tools=[self.pdf_download_tool],
-            output_file='results/download_report.md'
-        )
+    # @task
+    # def download_pdfs_task(self) -> Task:
+    #     return Task(
+    #         config=self.tasks_config['download_pdfs_task'], # type: ignore[index]
+    #         max_iter=1,
+    #         output_file='results/download_report.md'
+    #     )
     
 
     

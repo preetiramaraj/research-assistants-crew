@@ -1,0 +1,92 @@
+2026-05-14 14:35:55,579 - __main__ - INFO - Read 5 search queries from D:\GenAI\crew-ai\research_assistants\results\search_queries.md
+2026-05-14 14:35:55,580 - __main__ - INFO - Processing query 1/5: robot transparency mental-model
+2026-05-14 14:35:57,697 - __main__ - INFO - Found 10 papers for query: robot transparency mental-model
+2026-05-14 14:35:57,697 - __main__ - INFO - Processing query 2/5: uncertainty cues HRI
+2026-05-14 14:35:59,553 - __main__ - INFO - Found 10 papers for query: uncertainty cues HRI
+2026-05-14 14:35:59,553 - __main__ - INFO - Processing query 3/5: robot self-disclosure limitations
+2026-05-14 14:36:01,577 - __main__ - INFO - Found 10 papers for query: robot self-disclosure limitations
+2026-05-14 14:36:01,586 - __main__ - INFO - Processing query 4/5: status updates trust
+2026-05-14 14:36:03,727 - __main__ - INFO - Found 10 papers for query: status updates trust
+2026-05-14 14:36:03,728 - __main__ - INFO - Processing query 5/5: mental-model accuracy collaboration
+2026-05-14 14:36:05,161 - __main__ - INFO - Found 10 papers for query: mental-model accuracy collaboration
+2026-05-14 14:36:05,161 - __main__ - INFO - Total papers collected before deduplication: 50
+2026-05-14 14:36:05,162 - __main__ - INFO - Papers after deduplication: 50
+2026-05-14 14:36:05,163 - __main__ - INFO - Papers after ranking: 50
+2026-05-14 14:36:05,167 - __main__ - INFO - Literature review written to D:\GenAI\crew-ai\research_assistants\results\literature_review.md
+2026-05-14 14:36:18,629 - __main__ - INFO - Read 5 search queries from D:\GenAI\crew-ai\research_assistants\results\search_queries.md
+2026-05-14 14:36:18,630 - __main__ - INFO - Processing query 1/5: robot transparency mental-model
+2026-05-14 14:36:20,317 - __main__ - INFO - Found 10 papers for query: robot transparency mental-model
+2026-05-14 14:36:20,318 - __main__ - INFO - Processing query 2/5: uncertainty cues HRI
+2026-05-14 14:36:21,976 - __main__ - INFO - Found 10 papers for query: uncertainty cues HRI
+2026-05-14 14:36:21,976 - __main__ - INFO - Processing query 3/5: robot self-disclosure limitations
+2026-05-14 14:36:23,592 - __main__ - INFO - Found 10 papers for query: robot self-disclosure limitations
+2026-05-14 14:36:23,593 - __main__ - INFO - Processing query 4/5: status updates trust
+2026-05-14 14:36:25,474 - __main__ - INFO - Found 10 papers for query: status updates trust
+2026-05-14 14:36:25,475 - __main__ - INFO - Processing query 5/5: mental-model accuracy collaboration
+2026-05-14 14:36:26,841 - __main__ - INFO - Found 10 papers for query: mental-model accuracy collaboration
+2026-05-14 14:36:26,842 - __main__ - INFO - Total papers collected before deduplication: 50
+2026-05-14 14:36:26,843 - __main__ - INFO - Papers after deduplication: 50
+2026-05-14 14:36:26,843 - __main__ - INFO - Papers after ranking: 50
+2026-05-14 14:36:26,847 - __main__ - INFO - Literature review written to D:\GenAI\crew-ai\research_assistants\results\literature_review.md
+2026-05-15 15:37:32,300 - research_assistants.utils.literature_review - INFO - Read 5 search queries from D:\GenAI\crew-ai\research_assistants\results\search_queries.md
+2026-05-15 15:37:32,301 - research_assistants.utils.literature_review - INFO - Processing query 1/5: 1. robot transparency
+2026-05-15 15:37:34,419 - research_assistants.utils.literature_review - INFO - Found 10 papers for query: 1. robot transparency
+2026-05-15 15:37:34,420 - research_assistants.utils.literature_review - INFO - Processing query 2/5: 2. mental model accuracy
+2026-05-15 15:37:36,593 - research_assistants.utils.literature_review - INFO - Found 10 papers for query: 2. mental model accuracy
+2026-05-15 15:37:36,593 - research_assistants.utils.literature_review - INFO - Processing query 3/5: 3. explainable robot behavior
+2026-05-15 15:37:39,005 - research_assistants.utils.literature_review - INFO - Found 10 papers for query: 3. explainable robot behavior
+2026-05-15 15:37:39,006 - research_assistants.utils.literature_review - INFO - Processing query 4/5: 4. navigation task transparency
+2026-05-15 15:37:40,502 - research_assistants.utils.literature_review - INFO - Found 10 papers for query: 4. navigation task transparency
+2026-05-15 15:37:40,502 - research_assistants.utils.literature_review - INFO - Processing query 5/5: 5. mobile robot mental model
+2026-05-15 15:37:42,127 - research_assistants.utils.literature_review - INFO - Found 10 papers for query: 5. mobile robot mental model
+2026-05-15 15:37:42,127 - research_assistants.utils.literature_review - INFO - Total papers collected before deduplication: 50
+2026-05-15 15:37:42,128 - research_assistants.utils.literature_review - INFO - Papers after deduplication: 50
+2026-05-15 15:37:42,128 - research_assistants.utils.literature_review - INFO - Papers after ranking: 50
+2026-05-15 15:37:42,130 - research_assistants.utils.literature_review - INFO - Literature review written to D:\GenAI\crew-ai\research_assistants\results\literature_review.md
+2026-05-15 15:47:15,378 - research_assistants.utils.literature_review - INFO - Read 3 search queries from C:\Users\preet\AppData\Local\Temp\tmp_x70l3nj\search_queries.md
+2026-05-15 15:47:15,384 - research_assistants.utils.literature_review - ERROR - Search queries file not found: non_existent_file.md
+2026-05-15 15:47:15,391 - research_assistants.utils.literature_review - INFO - Read 0 search queries from C:\Users\preet\AppData\Local\Temp\tmpfw065m9c\empty.md
+2026-05-15 15:47:15,416 - research_assistants.utils.literature_review - INFO - Read 3 search queries from C:\Users\preet\AppData\Local\Temp\tmpb_yvl479\queries.md
+2026-05-15 15:47:15,432 - research_assistants.utils.literature_review - INFO - Read 3 search queries from C:\Users\preet\AppData\Local\Temp\tmppu9c7sch\search_queries.md
+2026-05-15 15:47:15,432 - research_assistants.utils.literature_review - INFO - Processing query 1/3: robot explanation trust
+2026-05-15 15:47:15,432 - research_assistants.utils.literature_review - INFO - Found 1 papers for query: robot explanation trust
+2026-05-15 15:47:15,432 - research_assistants.utils.literature_review - INFO - Processing query 2/3: mental model human robot
+2026-05-15 15:47:15,432 - research_assistants.utils.literature_review - INFO - Found 1 papers for query: mental model human robot
+2026-05-15 15:47:15,432 - research_assistants.utils.literature_review - INFO - Processing query 3/3: natural language robot behavior
+2026-05-15 15:47:15,432 - research_assistants.utils.literature_review - INFO - Found 1 papers for query: natural language robot behavior
+2026-05-15 15:47:15,432 - research_assistants.utils.literature_review - INFO - Total papers collected before deduplication: 3
+2026-05-15 15:47:15,432 - research_assistants.utils.literature_review - INFO - Papers after deduplication: 3
+2026-05-15 15:47:15,432 - research_assistants.utils.literature_review - INFO - Papers after ranking: 3
+2026-05-15 15:47:15,433 - research_assistants.utils.literature_review - INFO - Literature review written to C:\Users\preet\AppData\Local\Temp\tmppu9c7sch\literature_review.md
+2026-05-15 15:47:15,451 - research_assistants.utils.literature_review - INFO - Read 3 search queries from C:\Users\preet\AppData\Local\Temp\tmp9wuw2ice\search_queries.md
+2026-05-15 15:47:15,451 - research_assistants.utils.literature_review - INFO - Processing query 1/3: robot explanation trust
+2026-05-15 15:47:15,451 - research_assistants.utils.literature_review - INFO - Found 1 papers for query: robot explanation trust
+2026-05-15 15:47:15,451 - research_assistants.utils.literature_review - INFO - Processing query 2/3: mental model human robot
+2026-05-15 15:47:15,451 - research_assistants.utils.literature_review - INFO - Found 1 papers for query: mental model human robot
+2026-05-15 15:47:15,451 - research_assistants.utils.literature_review - INFO - Processing query 3/3: natural language robot behavior
+2026-05-15 15:47:15,451 - research_assistants.utils.literature_review - INFO - Found 1 papers for query: natural language robot behavior
+2026-05-15 15:47:15,451 - research_assistants.utils.literature_review - INFO - Total papers collected before deduplication: 3
+2026-05-15 15:47:15,451 - research_assistants.utils.literature_review - INFO - Papers after deduplication: 1
+2026-05-15 15:47:15,451 - research_assistants.utils.literature_review - INFO - Papers after ranking: 1
+2026-05-15 15:47:15,452 - research_assistants.utils.literature_review - INFO - Literature review written to C:\Users\preet\AppData\Local\Temp\tmp9wuw2ice\literature_review.md
+2026-05-15 15:47:15,467 - research_assistants.utils.literature_review - INFO - Read 3 search queries from C:\Users\preet\AppData\Local\Temp\tmpxf9p315f\search_queries.md
+2026-05-15 15:47:15,468 - research_assistants.utils.literature_review - INFO - Processing query 1/3: robot explanation trust
+2026-05-15 15:47:15,468 - research_assistants.utils.literature_review - ERROR - Error processing query 'robot explanation trust': API error
+2026-05-15 15:47:15,468 - research_assistants.utils.literature_review - INFO - Processing query 2/3: mental model human robot
+2026-05-15 15:47:15,468 - research_assistants.utils.literature_review - INFO - Found 1 papers for query: mental model human robot
+2026-05-15 15:47:15,468 - research_assistants.utils.literature_review - INFO - Processing query 3/3: natural language robot behavior
+2026-05-15 15:47:15,468 - research_assistants.utils.literature_review - INFO - Found 1 papers for query: natural language robot behavior
+2026-05-15 15:47:15,468 - research_assistants.utils.literature_review - INFO - Total papers collected before deduplication: 2
+2026-05-15 15:47:15,468 - research_assistants.utils.literature_review - INFO - Papers after deduplication: 2
+2026-05-15 15:47:15,468 - research_assistants.utils.literature_review - INFO - Papers after ranking: 2
+2026-05-15 15:47:15,469 - research_assistants.utils.literature_review - INFO - Literature review written to C:\Users\preet\AppData\Local\Temp\tmpxf9p315f\literature_review.md
+2026-05-15 15:47:15,489 - research_assistants.utils.literature_review - INFO - Read 3 search queries from C:\Users\preet\AppData\Local\Temp\tmpor6_15ef\search_queries.md
+2026-05-15 15:47:15,489 - research_assistants.utils.literature_review - INFO - Processing query 1/3: robot explanation trust
+2026-05-15 15:47:15,490 - research_assistants.utils.literature_review - INFO - Found 0 papers for query: robot explanation trust
+2026-05-15 15:47:15,490 - research_assistants.utils.literature_review - INFO - Processing query 2/3: mental model human robot
+2026-05-15 15:47:15,490 - research_assistants.utils.literature_review - INFO - Found 0 papers for query: mental model human robot
+2026-05-15 15:47:15,490 - research_assistants.utils.literature_review - INFO - Processing query 3/3: natural language robot behavior
+2026-05-15 15:47:15,491 - research_assistants.utils.literature_review - INFO - Found 0 papers for query: natural language robot behavior
+2026-05-15 15:47:15,491 - research_assistants.utils.literature_review - WARNING - No papers found for any query. Writing empty output.
+2026-05-15 15:47:15,517 - research_assistants.utils.literature_review - INFO - Read 0 search queries from C:\Users\preet\AppData\Local\Temp\tmpxl6zm40f\empty.md
+2026-05-15 15:47:15,517 - research_assistants.utils.literature_review - ERROR - No search queries found. Exiting.
