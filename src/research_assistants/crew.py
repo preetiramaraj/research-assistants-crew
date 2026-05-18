@@ -4,7 +4,6 @@ from crewai.agents.agent_builder.base_agent import BaseAgent
 from crewai_tools import RagTool, TavilySearchTool, ArxivPaperTool
 from pathlib import Path
 from typing import List
-from research_assistants.tools.open_access_pdf_from_markdown_tool import OpenAccessPdfFromMarkdownTool
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
@@ -23,8 +22,8 @@ class ResearchAssistants():
     llm2 = LLM(model="groq/openai/gpt-oss-20b",
               num_retries=3
               )
-    lit_review_dir = (Path(__file__).resolve().parents[2] / "lit_review_pdfs").resolve()
-    lit_review_dir.mkdir(parents=True, exist_ok=True)
+
+    
     # Learn more about YAML configuration files here:
     # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
     # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
@@ -32,10 +31,6 @@ class ResearchAssistants():
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
 
-    pdf_download_tool = OpenAccessPdfFromMarkdownTool(
-        md_path=str((Path(__file__).resolve().parents[2] / "results" / "literature_review.md").resolve()),
-        save_dir=str(lit_review_dir),
-    )
     @agent
     def researcher(self) -> Agent:
         return Agent(
@@ -50,9 +45,7 @@ class ResearchAssistants():
         return Agent(
             config=self.agents_config['literature_reviewer'], # type: ignore[index]
             verbose=True,
-            llm=self.llm2,
-            # tools=[TavilySearchTool(), self.arxiv_tool]
-            tools=[TavilySearchTool(), self.arxiv_tool]
+            llm=self.llm2
         )
 
     # @agent

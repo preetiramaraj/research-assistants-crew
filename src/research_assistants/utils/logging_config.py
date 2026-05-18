@@ -13,7 +13,7 @@ def setup_file_logger(
     level: int = logging.INFO
 ) -> logging.Logger:
     """
-    Create a logger that writes to a file.
+    Create a logger that writes to a file with UTF-8 encoding.
     
     Args:
         name: Logger name (typically __name__)
@@ -25,7 +25,8 @@ def setup_file_logger(
     """
     log_file = Path(log_file_path)
     
-    handler = logging.FileHandler(log_file)
+    # File handler with UTF-8 encoding
+    handler = logging.FileHandler(log_file, encoding='utf-8')
     handler.setLevel(level)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)

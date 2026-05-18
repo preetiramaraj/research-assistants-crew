@@ -4,7 +4,7 @@ from pathlib import Path
 from dataclasses import dataclass
 from unittest.mock import patch
 
-from research_assistants.tools.pdf_downloader_service import download_pdfs_from_markdown
+from research_assistants.utils.pdf_downloader_service import download_pdfs_from_markdown
 
 
 @dataclass
@@ -16,9 +16,25 @@ class _FakeResponse:
 
     ok: bool
     _json: dict
+    headers: dict = None
+    _raw_content: bytes = b""
 
     def json(self):
         return self._json
+
+    @property
+    def raw(self):
+        return _FakeRaw(self._raw_content)
+
+
+class _FakeRaw:
+    def __init__(self, content: bytes):
+        self._content = content
+
+    def read(self, n: int = -1):
+        if n == -1:
+            return self._content
+        return self._content[:n]
 
 
 class _FakeSession:
@@ -37,6 +53,13 @@ class _FakeSession:
                 return resp
         return _FakeResponse(ok=False, _json={})
 
+    def head(self, url: str, timeout=None, allow_redirects=None):
+        # Match by URL prefix (good enough for resolver calls).
+        for prefix, resp in self._routes.items():
+            if url.startswith(prefix):
+                return resp
+        return _FakeResponse(ok=False, _json={})
+
 
 def test_download_pdfs_from_markdown_end_to_end(tmp_path: Path, monkeypatch):
     md_path = tmp_path / "literature_review.md"
@@ -47,44 +70,31 @@ def test_download_pdfs_from_markdown_end_to_end(tmp_path: Path, monkeypatch):
 # Literature review
 
 ### Paper 1
-Title: Arxiv Paper
+Title: Open Access PDF Paper
 Authors: A
+Year: 2024
+DOI: 10.1000/oa123
+arXiv: N/A
+Link: https://example.org/paper
+Open Access PDF: https://oa.example.org/paper.pdf
+
+### Paper 2
+Title: Arxiv Paper
+Authors: B
 Year: 2024
 DOI: N/A
 arXiv: 2401.01234
 Link: https://arxiv.org/abs/2401.01234
-Summary: S
-Relevance: R
+Open Access PDF: N/A
 
-### Paper 2
+### Paper 3
 Title: Unpaywall DOI Paper
-Authors: B
+Authors: C
 Year: 2023
 DOI: 10.1000/unpaywall123
 arXiv: N/A
 Link: https://example.org/paper
-Summary: S
-Relevance: R
-
-### Paper 3
-Title: Semantic Scholar DOI Paper
-Authors: C
-Year: 2022
-DOI: 10.1000/s2only456
-arXiv: N/A
-Link: https://example.org/paper2
-Summary: S
-Relevance: R
-
-### Paper 4
-Title: Direct PDF Link Paper
-Authors: D
-Year: 2021
-DOI: N/A
-arXiv: N/A
-Link: https://example.org/file.pdf
-Summary: S
-Relevance: R
+Open Access PDF: N/A
 """,
         encoding="utf-8",
     )
@@ -94,6 +104,12 @@ Relevance: R
 
     sess = _FakeSession(
         {
+            # Open Access PDF returns PDF content-type
+            "https://oa.example.org/paper.pdf": _FakeResponse(
+                ok=True,
+                _json={},
+                headers={"content-type": "application/pdf"},
+            ),
             # Unpaywall returns a direct PDF URL.
             "https://api.unpaywall.org/v2/10.1000/unpaywall123": _FakeResponse(
                 ok=True,
@@ -103,10 +119,11 @@ Relevance: R
                     }
                 },
             ),
-            # Semantic Scholar only (Unpaywall not called for this DOI in this fake setup).
-            "https://api.semanticscholar.org/graph/v1/paper/DOI:10.1000/s2only456": _FakeResponse(
+            # Validation response for Unpaywall PDF URL
+            "https://oa.example.org/unpaywall.pdf": _FakeResponse(
                 ok=True,
-                _json={"openAccessPdf": {"url": "https://s2.example.org/paper.pdf"}},
+                _json={},
+                headers={"content-type": "application/pdf"},
             ),
         }
     )
@@ -117,11 +134,15 @@ Relevance: R
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_bytes(b"%PDF-FAKE")
 
-    with patch("research_assistants.tools.pdf_downloader_service.download_pdf", new=fake_download):
+    with patch("research_assistants.utils.pdf_downloader_service.download_pdf", new=fake_download):
         results = download_pdfs_from_markdown(md_path=md_path, save_dir=save_dir, session=sess)
 
-    assert len(results) == 4
+    assert len(results) == 3
     assert all(r.status == "downloaded" for r in results)
+
+    # Explicitly verify the Open Access PDF paper uses the OA URL.
+    oa_result = next(r for r in results if r.paper.open_access_pdf != 'N/A' and r.paper.open_access_pdf.startswith('https'))
+    assert oa_result.pdf_url == "https://oa.example.org/paper.pdf"
 
     # Explicitly verify the arXiv paper resolves to the canonical arXiv PDF URL.
     arxiv_result = next(r for r in results if r.paper.arxiv != 'N/A')
@@ -129,5 +150,5 @@ Relevance: R
 
     # Ensure files were created.
     pdf_files = list(save_dir.glob("*.pdf"))
-    assert len(pdf_files) == 4
+    assert len(pdf_files) == 3
     assert all(p.read_bytes().startswith(b"%PDF-") for p in pdf_files)
