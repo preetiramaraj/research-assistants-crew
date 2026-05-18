@@ -26,6 +26,9 @@ def run():
 
     try:
         ResearchAssistants().crew().kickoff(inputs=inputs)
+        # Inserting a sleep timer so that the next function runs only after the documents from the crew run are written
+        time.sleep(3)
+        run_literature_review()
     except Exception as e:
         raise Exception(f"An error occurred while running the crew: {e}")
 
