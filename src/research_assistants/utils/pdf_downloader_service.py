@@ -8,8 +8,9 @@ from pathlib import Path
 from typing import Iterable, Optional
 from urllib.parse import urlparse
 
-import requests
+from curl_cffi import requests as requests
 from bs4 import BeautifulSoup
+from pypdf import PdfReader, PdfWriter
 
 from research_assistants.utils.logging_config import setup_file_logger
 
@@ -331,23 +332,14 @@ def download_pdf(
     """Download a PDF URL to disk, validating the content looks like a PDF."""
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with session.get(pdf_url, stream=True, timeout=40) as resp:
-        resp.raise_for_status()
-        # Read a small chunk to validate it is a PDF.
-        first = resp.raw.read(5)
-        if first != b"%PDF-":
-            # Fallback: some servers don't support streaming properly; check full content.
-            content = first + resp.content
-            if not content.startswith(b"%PDF-"):
-                raise ValueError(f"URL did not return a PDF: {pdf_url}")
-            out_path.write_bytes(content)
-            return
-
-        with out_path.open("wb") as f:
-            f.write(first)
-            for chunk in resp.iter_content(chunk_size=1024 * 64):
-                if chunk:
-                    f.write(chunk)
+    resp = session.get(pdf_url, timeout=40, allow_redirects=True)
+    resp.raise_for_status()
+    
+    content = resp.content  # curl_cffi buffers the full response
+    if not content.startswith(b"%PDF-"):
+        raise ValueError(f"URL did not return a PDF: {pdf_url}")
+    
+    out_path.write_bytes(content)
 
 
 @dataclass(frozen=True)
@@ -383,12 +375,7 @@ def download_pdfs_from_markdown(
 
     save_dir.mkdir(parents=True, exist_ok=True)
 
-    sess = session or requests.Session()
-    # Add browser-like headers to avoid basic bot detection
-    if not session:
-        sess.headers.update({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-        })
+    sess = session or requests.Session(impersonate="chrome120")
     unpaywall_email = os.environ.get("UNPAYWALL_EMAIL")
 
     results: list[DownloadResult] = []
@@ -450,6 +437,11 @@ def download_pdfs_from_markdown(
                     reason="",
                 )
             )
+            # Adding the relevant metadata to PDF for future RAG pipeline
+            logger.info(f"Updating metadata for {paper.title}")
+            add_metadata_to_pdf(paper, out_path)
+
+
         except Exception as e:
             results.append(
                 DownloadResult(
@@ -463,6 +455,30 @@ def download_pdfs_from_markdown(
 
     return results
 
+def add_metadata_to_pdf(paper, input_path: Path):
+    """Add metadata to a PDF file."""
+    reader = PdfReader(input_path)
+    writer = PdfWriter()
+
+    # Add all pages to the writer
+    for page in reader.pages:
+        writer.add_page(page)
+
+    # If you want to add the old metadata, include these two lines
+    if reader.metadata is not None:
+        writer.add_metadata(reader.metadata)
+    
+    # Add new metadata
+    writer.add_metadata(
+        {
+           "/Authors": paper.authors,
+           "/Title": paper.title,
+           "/Year": paper.year
+        }
+    )
+    
+    # Write the PDF back to the same file
+    writer.write(input_path)
 
 def format_download_report_md(results: Iterable[DownloadResult]) -> str:
     """Convert download results to a human-readable markdown report."""

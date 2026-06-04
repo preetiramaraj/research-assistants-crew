@@ -4,6 +4,8 @@ from pathlib import Path
 from dataclasses import dataclass
 from unittest.mock import patch
 
+from pypdf import PdfWriter
+
 from research_assistants.utils.pdf_downloader_service import download_pdfs_from_markdown
 
 
@@ -59,6 +61,14 @@ class _FakeSession:
             if url.startswith(prefix):
                 return resp
         return _FakeResponse(ok=False, _json={})
+
+
+def _write_simple_pdf(out_path: Path) -> None:
+    writer = PdfWriter()
+    writer.add_blank_page(width=72, height=72)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with out_path.open("wb") as f:
+        writer.write(f)
 
 
 def test_download_pdfs_from_markdown_end_to_end(tmp_path: Path, monkeypatch):
@@ -130,9 +140,7 @@ Open Access PDF: N/A
 
     def fake_download(pdf_url: str, out_path: Path, session):
         # We patch the real downloader so tests don't make network calls.
-        # A valid PDF starts with the magic bytes %PDF-.
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_path.write_bytes(b"%PDF-FAKE")
+        _write_simple_pdf(out_path)
 
     with patch("research_assistants.utils.pdf_downloader_service.download_pdf", new=fake_download):
         results = download_pdfs_from_markdown(md_path=md_path, save_dir=save_dir, session=sess)
@@ -152,3 +160,51 @@ Open Access PDF: N/A
     pdf_files = list(save_dir.glob("*.pdf"))
     assert len(pdf_files) == 3
     assert all(p.read_bytes().startswith(b"%PDF-") for p in pdf_files)
+
+
+def test_download_pdfs_from_markdown_calls_add_metadata_to_pdf(tmp_path: Path, monkeypatch):
+    md_path = tmp_path / "literature_review.md"
+    save_dir = tmp_path / "pdfs"
+
+    md_path.write_text(
+        """
+# Literature review
+
+### Paper 1
+Title: Test Metadata PDF
+Authors: Jane Doe
+Year: 2025
+DOI: 10.1000/test123
+arXiv: N/A
+Link: https://example.org/paper
+Open Access PDF: https://oa.example.org/paper.pdf
+""",
+        encoding="utf-8",
+    )
+
+    monkeypatch.setenv("UNPAYWALL_EMAIL", "test@example.com")
+
+    sess = _FakeSession(
+        {
+            "https://oa.example.org/paper.pdf": _FakeResponse(
+                ok=True,
+                _json={},
+                headers={"content-type": "application/pdf"},
+            )
+        }
+    )
+
+    def fake_download(pdf_url: str, out_path: Path, session):
+        _write_simple_pdf(out_path)
+
+    with patch("research_assistants.utils.pdf_downloader_service.download_pdf", new=fake_download), \
+        patch("research_assistants.utils.pdf_downloader_service.add_metadata_to_pdf") as mock_add_metadata:
+        results = download_pdfs_from_markdown(md_path=md_path, save_dir=save_dir, session=sess)
+
+    assert len(results) == 1
+    assert results[0].status == "downloaded"
+    assert mock_add_metadata.call_count == 1
+
+    called_paper, called_path = mock_add_metadata.call_args.args
+    assert called_paper.title == "Test Metadata PDF"
+    assert called_path == save_dir / "Test Metadata PDF.pdf"
