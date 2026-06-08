@@ -1,34 +1,28 @@
 # Research Assistant Crew
 
-### This is a CrewAI agent system set up to assist a researcher with defining research projects and hypotheses for a specific high-level research question. 
+### This is a AI agent system built with CrewAI, Python and LLMs set up to assist a researcher with defining research projects and hypotheses for a specific high-level research question. 
 
 ## Architecture Diagram 
-The following is the proposed architecture of the system that is in progress.
+The following is the proposed architecture of the system.
 
 ![Image](architecture_diagram.png)
 
 
 
-## Initial plan of implementation
+## Current plan of implementation
 
-The user first provides a high level research question that they would like to study and the domain of the study.
+The user provides a high-level research question and domain. From there, the system runs through four stages:
+1. **Project Scoping** — A researcher agent proposes candidate research projects based on the input. The user selects one to pursue.
 
-The **researcher agent** first suggests research projects based on the question and the domain provided. The researcher then gets to choose which project they want to explore further.
+2. **Literature Search** — The agent generates targeted search queries for the selected project. These queries are run against Semantic Scholar's API to retrieve a list of relevant papers. The following pipeline then downloads any open-access versions of those papers via arXiv and Unpaywall. The user reviews the retrieved papers and selects which ones to carry forward to the next stage.
 
-The **literature reviewer agent** reviews existing literature in the domain to identify existing work, and the open questions in the field.
+3. **Background Synthesis** — Downloaded papers are chunked and embedded into a ChromaDB vector store. Predefined queries probe the research space, and the retrieved context is passed to an LLM to synthesize a structured background section.
 
-The **project lead agent** uses this information to further refine and describe the research project in terms of assumptions, the gap in existing research, and the hypotheses that need to be tested.
+4. **Hypothesis Generation** — An experimenter agent proposes a research hypothesis or experimental design grounded in the generated background and the research project description. The user can iterate on this with feedback, prompting the agent to refine or regenerate its output.
 
-Once the user chooses which hypothesis they want to test, the **experimenter agent** designs an experimental procedure to test this hypothesis.
 
 ## How to run
 In the topmost folder, run the command **crewai install** to lock and install the dependencies. Then run **crewai run**.
 
-
-## Open Questions
-1. Design constraint: Access to academic literature is restricted because many papers sit behind paywalls. 
-    - Current workaround: Prioritize open-access papers (arXiv, author-hosted PDFs).
-2. Token Limits: Working with groq openai model means it is difficult to run multiple agents.
-   - Current workaround: Set LLM to retry after an execution delay so that token limit can reset.
 
 
