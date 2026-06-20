@@ -1,27 +1,38 @@
 import os
 from pathlib import Path
+import logging
 from typing import List, Tuple, Dict
 from datetime import date
+from xmlrpc import client
 
 import pymupdf.layout
 import pymupdf4llm
+import re
 from transformers import AutoTokenizer
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 import chromadb
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 from pypdf import PdfReader
 
-from logging_config import setup_file_logger
-
-
 def setup_logger(log_filename: str = None):
     if log_filename is None:
-        log_folder = Path(__file__).resolve().parents[1] / "logs"
+        log_folder = Path(__file__).resolve().parents[0] / "logs"
         os.makedirs(log_folder, exist_ok=True)
-        log_filename = str(log_folder / "pdf_to_embeddings.log")
+        log_filename = Path(log_folder).resolve() / "pdf_to_embeddings.log"
         if not os.path.exists(log_filename):
             open(log_filename, 'w').close()
-    return setup_file_logger(__name__, log_filename)
+
+    # File handler with UTF-8 encoding
+    handler = logging.FileHandler(log_filename, encoding='utf-8')
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    
+    logger = logging.getLogger(__name__)
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+
+    return logger
 
 
 def init_text_splitter(model_name: str = "nomic-ai/nomic-embed-text-v1.5", chunk_size: int = 512, chunk_overlap: int = 100):
@@ -50,18 +61,22 @@ def init_embedding_function(model_name: str = "nomic-ai/nomic-embed-text-v1.5", 
 
 
 def init_chromadb_client(path: str = None):
-    db_path = path or os.getenv("CHROMADB_PATH", "./chroma_db")
+    db_path = path or os.getenv("CHROMADB_PATH")
+    if db_path is None:
+        db_path = str(Path(__file__).resolve().parents[1] / "chroma_db")
     os.makedirs(db_path, exist_ok=True)
     client = chromadb.PersistentClient(path=db_path)
     return client
 
 
-def get_or_create_collection(client, name: str, embedding_function):
+def get_or_create_collection(client, name: str, embedding_function, logger):
     try:
-        collection = client.get_collection(name=name)
+        collection = client.get_collection(name=name, embedding_function=embedding_function)
+        logger.info(f"Collection '{name}' already exists. Using existing collection.")
         return collection
     except chromadb.errors.NotFoundError:
         collection = client.create_collection(name=name, embedding_function=embedding_function)
+        logger.info(f"Collection '{name}' created.")
         return collection
 
 
@@ -99,18 +114,31 @@ def add_to_collection(collection, documents: List[str], metadatas: List[Dict[str
     collection.add(documents=documents, metadatas=metadatas, ids=ids)
 
 
+def strip_references(text):
+    match = re.search(r'\n#{1,3}\s*[*_]*\s*(references|bibliography)\s*[*_]*\s*\n', text, re.IGNORECASE)
+    if match:
+        return text[:match.start()]
+    return text
+
+def write_pdf_to_markdown(pdf_folder: str, pdf_path: str, doc: str, logger) -> str:
+    md_text = convert_pdf_to_markdown(pdf_path)
+    md_text = strip_references(md_text)
+    md_file = os.path.join(pdf_folder, "md_files", doc[:-4] + ".md")
+    # with open(md_file, 'r', encoding='utf-8') as f:
+    #     md_text = f.read()
+    with open(md_file, "w", encoding="utf-8") as f:
+        f.write(md_text)
+    logger.info(f"Converted {doc} to {md_file}")
+    return md_text
+
 def process_pdf_folder(pdf_folder: str, collection, text_splitter, logger, id_start: int = 0) -> int:
     id_count = id_start
     for doc in os.listdir(pdf_folder):
         logger.info(f"Processing {doc}")
         pdf_path = os.path.join(pdf_folder, doc)
         if doc.endswith(".pdf"):
-            md_text = convert_pdf_to_markdown(pdf_path)
-            md_file = os.path.join(pdf_folder, "md_files", doc[:-4] + ".md")
-            with open(md_file, "w", encoding="utf-8") as f:
-                f.write(md_text)
-            logger.info(f"Converted {doc} to {md_file}")
-
+            logger.info(f"Processing PDF: {pdf_path}")
+            md_text = write_pdf_to_markdown(pdf_folder, pdf_path, doc, logger)
             metadata = extract_pdf_metadata(pdf_path)
 
             paper_chunks_list = chunk_text(md_text, text_splitter)
@@ -136,8 +164,7 @@ def main():
 
     today = str(date.today())
     collection_name = os.getenv("CHROMADB_COLLECTION", f"collection_{today}")
-    collection = get_or_create_collection(client, collection_name, embedding_fn)
-
+    collection = get_or_create_collection(client, collection_name, embedding_fn, logger)
     pdf_folder = os.getenv("PDF_FOLDER", os.path.join(os.getcwd(), "lit_review_pdfs"))
     process_pdf_folder(pdf_folder, collection, text_splitter, logger)
 
