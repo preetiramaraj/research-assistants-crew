@@ -4,13 +4,14 @@ from pathlib import Path
 import chromadb
 import pytest
 
-from pdf_to_embeddings import (
+from embedding_service.pdf_to_embeddings import (
     add_to_collection,
     chunk_text,
     get_or_create_collection,
     init_chromadb_client,
     init_embedding_function,
     init_text_splitter,
+    setup_logger
 )
 
 COLLECTION_NAME = "pytest_temp_collection"
@@ -22,7 +23,8 @@ def test_chromadb_persistent_client_rag_pipeline(tmp_path: Path, monkeypatch):
 
     client = init_chromadb_client(path=f"./{DB_DIR}")
     embedding_fn = init_embedding_function()
-    collection = get_or_create_collection(client, COLLECTION_NAME, embedding_fn)
+    logger = setup_logger(log_filename=f"./test_log.log")
+    collection = get_or_create_collection(client, COLLECTION_NAME, embedding_fn, logger)
 
     documents = [
         "search_document: This is a test document about robots and AI.",

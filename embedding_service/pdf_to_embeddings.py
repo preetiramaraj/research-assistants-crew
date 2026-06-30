@@ -105,6 +105,7 @@ def prepare_metadatas(metadata: Dict[str, str], n: int) -> List[Dict[str, str]]:
     return [metadata for _ in range(n)]
 
 
+# Generating IDs for the chunks, starting from a given number
 def generate_ids(start: int, n: int) -> Tuple[List[str], int]:
     ids = [f"id{i}" for i in range(start, start + n)]
     return ids, start + n
@@ -113,7 +114,7 @@ def generate_ids(start: int, n: int) -> Tuple[List[str], int]:
 def add_to_collection(collection, documents: List[str], metadatas: List[Dict[str, str]], ids: List[str]):
     collection.add(documents=documents, metadatas=metadatas, ids=ids)
 
-
+# Removing references and bibliography sections from the markdown text
 def strip_references(text):
     match = re.search(r'\n#{1,3}\s*[*_]*\s*(references|bibliography)\s*[*_]*\s*\n', text, re.IGNORECASE)
     if match:
@@ -162,19 +163,21 @@ def main():
     embedding_fn = init_embedding_function()
     client = init_chromadb_client()
 
+    #TODO: Consider asking user to provide a legible name for the collection
     today = str(date.today())
     collection_name = os.getenv("CHROMADB_COLLECTION", f"collection_{today}")
     collection = get_or_create_collection(client, collection_name, embedding_fn, logger)
     pdf_folder = os.getenv("PDF_FOLDER", os.path.join(os.getcwd(), "lit_review_pdfs"))
     process_pdf_folder(pdf_folder, collection, text_splitter, logger)
 
-    # Example query
-    results = collection.query(
-        query_texts=["search_query: What is the effect of robot errors?"],
-        n_results=3
-    )
+    # Example query - you can replace this with your own query or make it dynamic
+    # results = collection.query(
+    #     query_texts=["search_query: What existing approaches address robot explanation effectiveness?"],
+    #     n_results=3
+    # )
 
-    print(results)
+    # print(results)
+    logger.info(f"Total chunks in collection: {collection.count()}")
 
 
 if __name__ == "__main__":
