@@ -9,6 +9,7 @@ from pdf_to_embeddings import (
     get_or_create_collection,
     init_embedding_function
 )
+from run_paths import latest_run_dir
 
 def setup_logger(log_filename: str = None):
     if log_filename is None:
@@ -32,7 +33,7 @@ def setup_logger(log_filename: str = None):
 
 # Retrieve keywords from the search queries file
 def retrieve_keywords() -> list[str]:
-    queries_path = Path(__file__).resolve().parents[1] / "results" / "search_queries.md"
+    queries_path = latest_run_dir() / "search_queries.md"
     with open(queries_path, 'r', encoding='utf-8') as f:
         keywords = [line.strip() for line in f if line.strip()]
 
@@ -121,7 +122,7 @@ def select_collection(client):
 def write_chunks_to_file(all_results: list[dict], collection_name: str, logger):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     bg_chunks_file_name = f"bg_chunks_{collection_name.split('_')[-1]}_{timestamp}.txt"
-    background_results_path = os.path.join(Path(__file__).resolve().parents[1], "results", bg_chunks_file_name)
+    background_results_path = latest_run_dir() / bg_chunks_file_name
     
     with open(background_results_path, 'w', encoding='utf-8') as f:
         logger.info(f"Writing results to {background_results_path}")

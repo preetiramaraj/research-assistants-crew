@@ -65,7 +65,7 @@ class ResearchAssistants():
     def research_problem_task(self) -> Task:
         return Task(
             config=self.tasks_config['research_problem_task'], # type: ignore[index]
-            output_file='results/research_problem.md',
+            output_file='{run_dir}/research_problem.md',
             human_input=True
             #tools=[TavilySearchTool()]
         )
@@ -75,7 +75,7 @@ class ResearchAssistants():
         return Task(
             config=self.tasks_config['create_search_queries_task'], # type: ignore[index]
             human_input=True,
-            output_file='results/search_queries.md'
+            output_file='{run_dir}/search_queries.md'
             #tools=[TavilySearchTool()]
         )
 

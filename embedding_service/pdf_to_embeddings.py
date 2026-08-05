@@ -14,6 +14,7 @@ import chromadb
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 from pypdf import PdfReader
 
+from run_paths import latest_run_dir
 def setup_logger(log_filename: str = None):
     if log_filename is None:
         log_folder = Path(__file__).resolve().parents[0] / "logs"
@@ -134,6 +135,7 @@ def write_pdf_to_markdown(pdf_folder: str, pdf_path: str, doc: str, logger) -> s
 
 def process_pdf_folder(pdf_folder: str, collection, text_splitter, logger, id_start: int = 0) -> int:
     id_count = id_start
+    os.makedirs(os.path.join(pdf_folder, "md_files"), exist_ok=True)
     for doc in os.listdir(pdf_folder):
         logger.info(f"Processing {doc}")
         pdf_path = os.path.join(pdf_folder, doc)
@@ -163,11 +165,10 @@ def main():
     embedding_fn = init_embedding_function()
     client = init_chromadb_client()
 
-    #TODO: Consider asking user to provide a legible name for the collection
-    today = str(date.today())
-    collection_name = os.getenv("CHROMADB_COLLECTION", f"collection_{today}")
+    run_name = latest_run_dir().name
+    collection_name = os.getenv("CHROMADB_COLLECTION", f"collection_{run_name}")
     collection = get_or_create_collection(client, collection_name, embedding_fn, logger)
-    pdf_folder = os.getenv("PDF_FOLDER", os.path.join(os.getcwd(), "lit_review_pdfs"))
+    pdf_folder = os.getenv("PDF_FOLDER", str(latest_run_dir() / "lit_review_pdfs"))
     process_pdf_folder(pdf_folder, collection, text_splitter, logger)
 
     # Example query - you can replace this with your own query or make it dynamic

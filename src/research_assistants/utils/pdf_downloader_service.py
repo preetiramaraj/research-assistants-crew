@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 from pypdf import PdfReader, PdfWriter
 
 from research_assistants.utils.logging_config import setup_file_logger
+from research_assistants.utils.run_paths import latest_run_dir
 
 # This module implements the deterministic, testable core of the PDF downloading step.
 # It parses `results/literature_review.md`, resolves a best-effort PDF URL per paper,
@@ -532,11 +533,11 @@ def run_pdf_download(
     """
     # Set default paths relative to project root
     if md_path is None:
-        md_path = str(Path(__file__).resolve().parents[3] / "results" / "literature_review.md")
+        md_path = str(latest_run_dir() / "literature_review.md")
     if save_dir is None:
-        save_dir = str(Path(__file__).resolve().parents[3] / "lit_review_pdfs")
+        save_dir = str(latest_run_dir() / "lit_review_pdfs")
     if output_report is None:
-        output_report = str(Path(__file__).resolve().parents[3] / "results" / "download_report.md")
+        output_report = str(latest_run_dir() / "download_report.md")
     
     logger.info(f"Starting PDF download from {md_path}")
     logger.info(f"Saving PDFs to {save_dir}")

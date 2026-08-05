@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import List, Dict, Any
 from research_assistants.utils.logging_config import setup_file_logger
 
+from research_assistants.utils.run_paths import latest_run_dir
 from research_assistants.utils.semantic_scholar_client import (
     SemanticScholarClient,
     deduplicate_papers,
@@ -50,11 +51,11 @@ def run_literature_review(
         search_queries_path: Path to search_queries.md file
         output_path: Path to write literature_review.md
     """
-    # Set default paths relative to project root
+    # Set default paths relative to the latest run folder
     if search_queries_path is None:
-        search_queries_path = str(Path(__file__).resolve().parents[3] / "results" / "search_queries.md")
+        search_queries_path = str(latest_run_dir() / "search_queries.md")
     if output_path is None:
-        output_path = str(Path(__file__).resolve().parents[3] / "results" / "literature_review.md")
+        output_path = str(latest_run_dir() / "literature_review.md")
     
     # Read search queries
     queries = read_search_queries(search_queries_path)
