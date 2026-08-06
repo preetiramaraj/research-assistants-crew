@@ -1,9 +1,10 @@
 from crewai import Agent, Crew, LLM, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
-from crewai_tools import RagTool, TavilySearchTool, ArxivPaperTool
+from crewai_tools import TavilySearchTool
 from pathlib import Path
 from typing import List
+
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
@@ -16,10 +17,14 @@ class ResearchAssistants():
     tasks: List[Task]
 
     llm = LLM(model="groq/openai/gpt-oss-20b",
+              #temperature=0.5,
+              max_tokens=2048,
               num_retries=3
               )
 
     llm2 = LLM(model="groq/openai/gpt-oss-20b",
+              #temperature=0.5,
+              max_tokens=2048,
               num_retries=3
               )
 
@@ -31,13 +36,13 @@ class ResearchAssistants():
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
 
+
     @agent
     def researcher(self) -> Agent:
         return Agent(
             config=self.agents_config['researcher'], # type: ignore[index]
             verbose=True,
             llm=self.llm
-            tools=[TavilySearchTool(), self.arxiv_tool]
         )
 
     @agent
@@ -48,15 +53,6 @@ class ResearchAssistants():
             llm=self.llm2
         )
 
-    # @agent
-    # def pdf_downloader(self) -> Agent:
-    #     return Agent(
-    #         config=self.agents_config['pdf_downloader'], # type: ignore[index]
-    #         verbose=True,
-    #         llm=self.llm3,
-    #         max_iter=1,
-    #         tools=[self.pdf_download_tool]
-    #     )
 
     # To learn more about structured task outputs,
     # task dependencies, and task callbacks, check out the documentation:
@@ -76,35 +72,8 @@ class ResearchAssistants():
             config=self.tasks_config['create_search_queries_task'], # type: ignore[index]
             human_input=True,
             output_file='{run_dir}/search_queries.md'
-            #tools=[TavilySearchTool()]
         )
 
-    # @task
-    # def literature_review_task(self) -> Task:
-    #     return Task(
-    #         config=self.tasks_config['literature_review_task'], # type: ignore[index]
-    #         execution_delay=15,
-    #         tools=[self.semantic_scholar_tool],
-    #         output_file='results/literature_review.md'
-    #     )
-
-    # @task
-    # def download_pdfs_task(self) -> Task:
-    #     return Task(
-    #         config=self.tasks_config['download_pdfs_task'], # type: ignore[index]
-    #         max_iter=1,
-    #         output_file='results/download_report.md'
-    #     )
-    
-
-    
-
-    # @task
-    # def reporting_task(self) -> Task:
-    #     return Task(
-    #         config=self.tasks_config['reporting_task'], # type: ignore[index]
-    #         output_file='report.md'
-    #     )
 
     @crew
     def crew(self) -> Crew:
