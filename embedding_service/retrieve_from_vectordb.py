@@ -101,10 +101,17 @@ def select_collection(client):
     for i, name in enumerate(collection_names, start=1):
         print(f"{i}. {name}")
 
-    selection = input("Select collection by number or name (press Enter to use latest): ").strip()
+    default_name = f"collection_{latest_run_dir().name}"
+    has_default = default_name in collection_names
+    prompt = "Select collection by number or name"
+    if has_default:
+        prompt += f" (press Enter to use latest — {default_name})"
+    selection = input(prompt + ": ").strip()
+
     collection_name = None
     if selection == "":
-        collection_name = collection_names[-1]
+        if has_default:
+            collection_name = default_name
     elif selection.isdigit():
         idx = int(selection) - 1
         if 0 <= idx < len(collection_names):
@@ -114,8 +121,8 @@ def select_collection(client):
             collection_name = selection
 
     if collection_name is None:
-        print("Invalid selection — using the latest collection.")
-        collection_name = collection_names[-1]
+        logger.error("No valid collection selected (and no collection exists yet for the latest run). Exiting.")
+        raise SystemExit(1)
 
     return collection_name
 
