@@ -1,0 +1,10 @@
+hypothesis_task:
+  description: >
+    Read the project description provided here: {project-description} and the background section here: {background-section}
+    ONLY Use this information, especially the gaps identified, to identify maximum three clear testable hypotheses, and an experiment
+    to test these hypotheses. Also refine the project description and its goals based on the information provided.
+    The scope should be such that
+    this project can be completed within a 6 month timeframe.
+  expected_output: >
+    A refined project description with three testable hypotheses and experiment design that contributes to the high-level research question: {research-question}
+  agent: experimenter
