@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 import logging
 from typing import List, Tuple, Dict
-from datetime import date
 from xmlrpc import client
 
 import pymupdf.layout
@@ -15,6 +14,7 @@ from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunct
 from pypdf import PdfReader
 
 from run_paths import latest_run_dir
+
 def setup_logger(log_filename: str = None):
     if log_filename is None:
         log_folder = Path(__file__).resolve().parents[0] / "logs"
@@ -28,7 +28,7 @@ def setup_logger(log_filename: str = None):
     handler.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
-    
+
     logger = logging.getLogger(__name__)
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
