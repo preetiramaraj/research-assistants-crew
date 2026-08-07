@@ -24,7 +24,8 @@ def setup_file_logger(
         Configured logger instance
     """
     log_file = Path(log_file_path)
-    
+    log_file.parent.mkdir(parents=True, exist_ok=True)
+
     # File handler with UTF-8 encoding
     handler = logging.FileHandler(log_file, encoding='utf-8')
     handler.setLevel(level)
