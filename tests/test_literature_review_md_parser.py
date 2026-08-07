@@ -1,4 +1,4 @@
-from research_assistants.tools.pdf_downloader_service import parse_literature_review_markdown
+from research_assistants.utils.pdf_downloader_service import parse_literature_review_markdown
 
 
 def test_parse_literature_review_markdown_extracts_entries():
