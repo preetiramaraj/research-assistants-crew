@@ -4,6 +4,10 @@ import sys
 import warnings
 import time
 from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from research_assistants.crew import ResearchAssistants
 from research_assistants.utils.literature_review import run_literature_review
 from research_assistants.utils.pdf_downloader_service import run_pdf_download

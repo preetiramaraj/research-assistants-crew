@@ -2,6 +2,10 @@ import sys
 import warnings
 import time
 from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from research_assistants.project_refiner_crew import ProjectRefiner
 from research_assistants.utils.run_paths import latest_run_dir
 
