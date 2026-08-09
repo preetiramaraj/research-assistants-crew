@@ -17,7 +17,7 @@ class ProjectRefiner():
     llm = LLM(model="groq/openai/gpt-oss-20b",
                 #model="huggingface/meta-llama/Llama-3.1-8B-Instruct:fastest",
               #temperature=0.5,
-              max_tokens=6000,
+              max_tokens=4096,
               num_retries=3
               )
 
